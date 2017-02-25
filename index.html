@@ -4,11 +4,13 @@
 <head>
   <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
+	<title>The HTML5 Herald</title>
+	<meta name="description" content="The HTML5 Herald">
+	<meta name="author" content="SitePoint">
 
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+	<!--<link rel="stylesheet" href="css/styles.css?v=1.0">-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.35.3/es6-shim.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -16,6 +18,103 @@
 </head>
 
 <body>
-  <script src="js/scripts.js"></script>
+	<script type="text/javascript">
+	// class that represents the footprint of an object
+	class Rect {
+		constructor(width, height) {
+			this.width = width;
+			this.height = height;
+		}
+
+		// function to set a position, takes an x and y coordinate
+		setPos(x,y) {
+			this.pos = {
+				xPos: x,
+				yPos: y
+			}
+		}
+	}
+
+	// class containing the "space" to be filled, as well as methods for "packing"
+	class Container {
+		constructor(width, height) {
+			this.width = width;
+			this.height = height;
+		}
+
+		// function to initialize our container
+		init() {
+			/*this.pix = new Pixels(this.width, this.height);
+			this.pix.init();*/
+
+			// for now, I'm just going to use a multi-dimensional array...I can look into implementing an iterable on a Pixels class later
+			this.pixels = new array(width);
+			for(var i=0; i<height; i++) {
+				this.pixels[i] = new Array(height);
+				this.pixels[i].fill(i);
+			}
+		}
+
+		// function for iterating through pixels array, setting pixels to "true" (meaning filled)
+		// consider adding a color value too
+		// accepts a rectangle, and an x,y "origin"
+		pack(x,y,r) {
+			// iterate through all columns the object will occupy, starting with origin
+			for( var i = x; i<r.width+x; i++ ) {
+				// iterate through all pixels in said column, setting true on squares object occupies
+				for( var j = y; j<r.height+y; j++ ) {
+					this.pixels[x][y] = true;
+					// alternatively, this.pixels[x][y] = r.color;
+				}
+			}
+
+			r.setPos(x,y);
+		}
+
+		// checks whether there is sufficient vertical space from origin to fit object
+		fitsVert(y,h) {
+			// assumes there's nothing but the edge of the container above origin, since we stack "bottom up"
+			if( y+h >= this.height ) {
+				// too big!  This isn't a valid location
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		// checks whether there is enough space between origin and right edge of container for object
+		fitsHor(x,w) {
+			// assumes there's nothing to the right of origin, since we're packing from the left
+			if( x+w >= this.width ) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		// call the above two "check" functions (for vertical and horizontal respectively) to establish if the object fits the space
+		// accepts an x and y coordinate (the 'origin') and a rectangle/shape
+		// consider just automagically calling "pack" from this function, should it fit
+		checkFits(x,y,r) {
+			if ( fitsVert(y,r.height) && fitsHor(x,r.width) ) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	// function that takes an array of rectangles/footprints, then returns a sorted array, descending based on object height
+	function sortRects( arrRects ) {
+
+	}
+
+	jQuery(document).ready(function() {
+		var cont = new Container(5,4);
+		console.log("container width and height are",cont.width, cont.height);
+		cont.init();
+		console.log("pixels is", cont.pixels);
+	});
+	</script>
 </body>
 </html>
