@@ -143,7 +143,35 @@
 	// if rectangle fits, using current pixel as origin, pack it in!
 	function assignRects( arrRects ) {
 
-		
+		//iterate through arrRects
+		for( var l=0, len=arrRects.length; l < len; l++ ) {
+			var r = arrRects[l];
+			var rectSet = false; // variable to determine if the current rectangle has been placed...if so, continue to next shape
+			console.log("placing rectangle", r);
+
+			// iterate through container's pixels, checking for an empty origin pixel
+			// will move through all "columns" (x values), checking all of that column's pixels (y values) respectively
+			// start at bottom left, ie pixels[0][0] ie 0,0
+			for( var i = 0; i<cont.width; i++ ) {
+				// in a column, check its pixel's values, starting from bottom
+				for( var j=0; j<cont.height; j++) {
+					console.log("Checking pixel "+i+","+j);
+					console.log("pixel value is " + cont.pixels[i][j]);
+					// confirm both that this pixel = false (thus, is empty) and that it fits container and overlaps no shapes from this origin
+					if( !cont.pixels[i][j] && cont.checkFits(i,j,r) ) {
+						// it should fit!  assign
+						cont.pack(i,j,r);
+						rectSet = true;
+						break;
+					}
+				}
+				if ( rectSet )
+					break;
+			}
+
+			if ( !rectSet )
+				console.log("Failed to place ", r);
+		}
 
 	}
 
@@ -156,7 +184,8 @@
 	var r1 = new Rect(1,3,"red");
 	var r2 = new Rect(2,2,"blue");
 	var r3 = new Rect(3,1,"green");
-	var rectangles = [r1,r2,r3];
+	var r4 = new Rect(4,1,"yellow");
+	var rectangles = [r1,r2,r3,r4];
 	console.log("rectangles are ", rectangles);
 	</script>
 </body>
