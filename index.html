@@ -21,9 +21,10 @@
 	<script type="text/javascript">
 	// class that represents the footprint of an object
 	class Rect {
-		constructor(width, height) {
+		constructor(width, height, color) {
 			this.width = width;
 			this.height = height;
+			this.color = color;
 		}
 
 		// function to set a position, takes an x and y coordinate
@@ -48,9 +49,9 @@
 			this.pix.init();*/
 
 			// for now, I'm just going to use a multi-dimensional array...I can look into implementing an iterable on a Pixels class later
-			this.pixels = new array(width);
+			this.pixels = new Array(this.width);
 			for(var i=0; i<height; i++) {
-				this.pixels[i] = new Array(height);
+				this.pixels[i] = new Array(this.height);
 				this.pixels[i].fill(i);
 			}
 		}
@@ -63,7 +64,7 @@
 			for( var i = x; i<r.width+x; i++ ) {
 				// iterate through all pixels in said column, setting true on squares object occupies
 				for( var j = y; j<r.height+y; j++ ) {
-					this.pixels[x][y] = true;
+					this.pixels[i][j] = r.color;
 					// alternatively, this.pixels[x][y] = r.color;
 				}
 			}
@@ -72,22 +73,43 @@
 		}
 
 		// checks whether there is sufficient vertical space from origin to fit object
-		fitsVert(y,h) {
+		fitsVert(x,y,h) {
 			// assumes there's nothing but the edge of the container above origin, since we stack "bottom up"
 			if( y+h >= this.height ) {
 				// too big!  This isn't a valid location
+				console.log("taller than container");
 				return false;
 			} else {
+				// iterate vertically, confirming nothing else has been placed in any of this column's pixels, up to rectangle's height
+				for( var j = y; j<h+y; j++ ) {
+					//check whether current pixel is occupied
+					if( this.pixels[x,j] != false ) {
+						console.log("occupied pixel in fitsVert found");
+						// pixel's occupied!  No good!
+						return false;
+					}
+				}
+				// this column's got enough empty pixels
 				return true;
 			}
 		}
 
 		// checks whether there is enough space between origin and right edge of container for object
-		fitsHor(x,w) {
-			// assumes there's nothing to the right of origin, since we're packing from the left
+		fitsHor(x,y,w) {
+			// check whether rectangle will overhang the container from current origin
 			if( x+w >= this.width ) {
+				console.log("wider than container");
 				return false;
 			} else {
+				// iterate horizontally along the row specified by y, checking we've got enough empty pixels for the rectangle
+				for( var i =x; i<w+x; i++ ){
+					// confirm whether current pixel is empty
+					if( this.pixels[i,y] != false ) {
+						console.log("occupied pixel in fitsHor found");
+						// pixel is occupied!  return false
+						return false;
+					}
+				}
 				return true;
 			}
 		}
@@ -96,7 +118,7 @@
 		// accepts an x and y coordinate (the 'origin') and a rectangle/shape
 		// consider just automagically calling "pack" from this function, should it fit
 		checkFits(x,y,r) {
-			if ( fitsVert(y,r.height) && fitsHor(x,r.width) ) {
+			if ( this.fitsVert(x,y,r.height) && this.fitsHor(x,y,r.width) ) {
 				return true;
 			} else {
 				return false;
@@ -109,11 +131,23 @@
 
 	}
 
+	// function takes a rectangle and iterates through the container's pixel array, looking for an empty pixel
+	// if rectangle fits, using current pixel as origin, pack it in!
+	function assignRects( arrRects ) {
+
+	}
+
 	jQuery(document).ready(function() {
 		var cont = new Container(5,4);
 		console.log("container width and height are",cont.width, cont.height);
 		cont.init();
 		console.log("pixels is", cont.pixels);
+
+		// create a few quick rectangles, push them into an array for processing
+		var r1 = new Rect(1,3,"red");
+		var r2 = new Rect(2,2,"blue");
+		var r3 = new Rect(3,1,"green");
+		var rectangles = [r1,r2,r3];
 	});
 	</script>
 </body>
