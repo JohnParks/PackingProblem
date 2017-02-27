@@ -136,7 +136,20 @@
 
 	// function that takes an array of rectangles/footprints, then returns a sorted array, descending based on object height
 	function sortRects( arrRects ) {
-
+		var minIdx, temp, 
+			len = arrRects.length;
+		for(var i = 0; i < len; i++){
+			minIdx = i;
+		for(var  j = i+1; j<len; j++){
+			if(arrRects[j].height>arrRects[minIdx].height){
+				minIdx = j;
+			}
+		}
+		temp = arrRects[i];
+		arrRects[i] = arrRects[minIdx];
+			arrRects[minIdx] = temp;
+		}
+		return arrRects;
 	}
 
 	// function takes a rectangle and iterates through the container's pixel array, looking for an empty pixel
@@ -213,10 +226,13 @@
 	// create a few quick rectangles, push them into an array for processing
 	var r1 = new Rect(6,6,"red");
 	var r2 = new Rect(2,2,"blue");
-	//var r3 = new Rect(3,1,"green");
-	//var r4 = new Rect(4,1,"yellow");
-	var rectangles = [r1,r2];
+	var r3 = new Rect(3,1,"green");
+	var r4 = new Rect(4,3,"yellow");
+	var rectangles = [r1,r2,r3,r4];
+
+	var sortedRects = sortRects( rectangles );
 	console.log("rectangles are ", rectangles);
+	console.log("sorted rectanges are", sortedRects);
 	</script>
 
 	<div id="table-container"></div>
